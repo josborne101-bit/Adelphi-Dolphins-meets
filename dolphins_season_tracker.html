@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adelphi Dolphins</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&display=swap');
+
+/* ── TOKENS ── */
+:root {
+  /* shared */
+  --water:     #1b7fcb;
+  --water-lt:  #4faae8;
+  --chlorine:  #7df5d0;
+  --gold:      #f5c842;
+  --green:     #16a34a;
+  --red:       #dc2626;
+  --amber:     #d97706;
+
+  /* parent (light) */
+  --p-bg:      #eef3fb;
+  --p-surface: #ffffff;
+  --p-card:    #f7faff;
+  --p-border:  #d0ddf0;
+  --p-navy:    #0a1628;
+  --p-text:    #1a2e50;
+  --p-muted:   #5a7499;
+  --p-accent:  #1b7fcb;
+
+  /* coach (dark) */
+  --c-bg:      #08132a;
+  --c-mid:     #0f1f3d;
+  --c-card:    #142449;
+  --c-light:   #1e3564;
+  --c-border:  rgba(30,53,100,.7);
+  --c-text:    #c4d8f2;
+  --c-muted:   #6a8ab0;
+  --c-white:   #e8f2ff;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{min-height:100vh;font-family:'Barlow',sans-serif;font-size:15px;}
+
+body.parent-mode { background:var(--p-bg); color:var(--p-text); }
+body.coach-mode  { background:var(--c-bg); color:var(--c-text); }
+
+/* ── SHARED UTILITIES ── */
+.btn{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:8px 16px;border:none;border-radius:5px;cursor:pointer;transition:opacity .15s,transform .1s;}
+.btn:hover{opacity:.88;transform:translateY(-1px);}
+.btn-primary{background:var(--water);color:#fff;}
+.btn-accent{background:var(--chlorine);color:var(--p-navy);}
+.btn-ghost-dark{background:transparent;border:1px solid var(--c-light);color:var(--c-text);}
+.btn-ghost-light{background:transparent;border:1px solid var(--p-border);color:var(--p-text);}
+.btn-danger{background:#7a1c1c;color:#fcc;}
+.btn-sm{font-size:11px;padding:5px 10px;}
+.tag{font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:700;}
+.tag-green{background:rgba(22,163,74,.12);color:#16a34a;border:1px solid rgba(22,163,74,.25);}
+.tag-red{background:rgba(220,38,38,.12);color:#dc2626;border:1px solid rgba(220,38,38,.25);}
+.tag-amber{background:rgba(217,119,6,.12);color:#d97706;border:1px solid rgba(217,119,6,.25);}
+.tag-blue{background:rgba(27,127,203,.12);color:var(--water-lt);border:1px solid rgba(27,127,203,.25);}
+
+/* ══════════════════════════════
+   PARENT MODE
+══════════════════════════════ */
+
+
+
+/* PARENT HEADER */
+#parent-header {
+  background:var(--p-navy);
+  padding:14px 24px;
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+.p-logo { flex:1; }
+.p-logo-name{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;color:#fff;letter-spacing:.04em;line-height:1;}
+.p-logo-name span{color:var(--chlorine);}
+.p-logo-sub{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-top:2px;}
+
+/* VIEW TABS */
+.view-tabs{display:flex;gap:2px;padding:0 24px;background:var(--p-navy);}
+.view-tab{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:10px 18px;background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:0;transition:color .15s,border-color .15s;}
+.view-tab:hover{color:rgba(255,255,255,.75);}
+.view-tab.active-families{color:#fff;border-bottom-color:var(--water);}
+.view-tab.active-coaches{color:var(--chlorine);border-bottom-color:var(--chlorine);}
+
+/* PARENT HERO */
+.p-hero {
+  background:linear-gradient(135deg,var(--p-navy) 0%,#1a3a6b 100%);
+  padding:40px 24px 48px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.p-hero::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:repeating-linear-gradient(90deg,rgba(27,127,203,.07) 0,rgba(27,127,203,.07) 2px,transparent 2px,transparent 36px);
+  pointer-events:none;
+}
+.p-hero-eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--chlorine);margin-bottom:8px;}
+.p-hero h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(32px,6vw,52px);font-weight:900;color:#fff;letter-spacing:.02em;line-height:1.05;margin-bottom:24px;}
+.p-hero h1 em{color:var(--chlorine);font-style:normal;}
+
+/* SWIMMER SEARCH */
+.search-wrap{max-width:520px;margin:0 auto;position:relative;}
+.search-wrap input{
+  width:100%;
+  padding:16px 56px 16px 20px;
+  font-size:17px;
+  font-family:'Barlow',sans-serif;
+  border:none;
+  border-radius:8px;
+  background:#fff;
+  color:var(--p-navy);
+  box-shadow:0 4px 24px rgba(0,0,0,.25);
+  outline:none;
+}
+.search-wrap input::placeholder{color:#8aa0bf;}
+.search-icon{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:20px;pointer-events:none;}
+.search-results{
+  position:absolute;
+  top:calc(100% + 6px);
+  left:0;right:0;
+  background:#fff;
+  border-radius:8px;
+  box-shadow:0 8px 32px rgba(0,0,0,.2);
+  z-index:50;
+  max-height:360px;
+  overflow-y:auto;
+  display:none;
+}
+.search-results.open{display:block;}
+.search-result-item{padding:12px 18px;cursor:pointer;border-bottom:1px solid var(--p-border);display:flex;align-items:center;gap:12px;}
+.search-result-item:hover{background:var(--p-card);}
+.search-result-item:last-child{border-bottom:none;}
+.sri-name{font-weight:600;color:var(--p-navy);font-size:15px;}
+.sri-meta{font-size:12px;color:var(--p-muted);}
+.sri-badge{margin-left:auto;}
+
+/* PARENT MAIN */
+.p-main{max-width:900px;margin:0 auto;padding:28px 20px 60px;}
+
+/* SEASON SCHEDULE */
+.p-section-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--p-muted);margin-bottom:14px;padding-bottom:6px;border-bottom:2px solid var(--p-border);}
+.meet-timeline{display:flex;flex-direction:column;gap:10px;margin-bottom:36px;}
+.meet-card{background:var(--p-surface);border:1px solid var(--p-border);border-radius:8px;overflow:hidden;cursor:pointer;transition:border-color .15s,box-shadow .15s;}
+.meet-card:hover{border-color:var(--water);box-shadow:0 2px 12px rgba(27,127,203,.12);}
+.meet-card.expanded{border-color:var(--water);}
+.meet-card-row{display:flex;align-items:center;gap:16px;padding:14px 18px;}
+.meet-date-block{background:var(--p-navy);border-radius:6px;padding:8px 12px;text-align:center;min-width:52px;flex-shrink:0;}
+.meet-date-day{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;color:#fff;line-height:1;}
+.meet-date-mon{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);}
+.meet-card-info{flex:1;}
+.meet-card-name{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:700;color:var(--p-navy);}
+.meet-card-loc{font-size:13px;color:var(--p-muted);margin-top:3px;display:flex;align-items:center;gap:6px;}
+.meet-card-meta{display:flex;gap:8px;align-items:center;flex-shrink:0;}
+.meet-chevron{font-size:13px;color:var(--p-muted);transition:transform .2s;}
+.meet-chevron.open{transform:rotate(90deg);}
+
+/* MEET HEAT SHEET (parent) */
+.meet-heatsheet{display:none;padding:0 18px 18px;}
+.meet-heatsheet.open{display:block;}
+.hs-event{margin-bottom:16px;}
+.hs-event-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--water);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;padding:6px 0;border-bottom:1px solid var(--p-border);}
+.hs-heat-label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--p-muted);margin:8px 0 4px;font-weight:600;}
+.hs-row{display:flex;align-items:center;gap:12px;padding:6px 10px;border-radius:4px;font-size:13px;}
+.hs-row:nth-child(even){background:var(--p-card);}
+.hs-lane{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--p-muted);width:24px;text-align:right;flex-shrink:0;}
+.hs-name{flex:1;font-weight:500;color:var(--p-text);}
+.hs-age{font-size:11px;color:var(--p-muted);}
+.hs-time{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--p-navy);}
+.hs-time.nt{color:var(--p-muted);font-size:12px;font-style:italic;font-weight:400;}
+.hs-empty{color:var(--p-muted);font-style:italic;font-size:13px;padding:20px;text-align:center;}
+
+.p-empty{text-align:center;padding:48px 24px;color:var(--p-muted);}
+.p-empty .p-empty-icon{font-size:40px;margin-bottom:12px;}
+.p-empty strong{display:block;font-family:'Barlow Condensed',sans-serif;font-size:18px;color:var(--p-muted);margin-bottom:6px;font-weight:700;font-style:normal;}
+
+/* ══════════════════════════════
+   SWIMMER MODAL (parent)
+══════════════════════════════ */
+.sw-modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,22,40,.6);z-index:200;align-items:center;justify-content:center;padding:16px;}
+.sw-modal-overlay.open{display:flex;}
+.sw-modal{background:#fff;border-radius:12px;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;box-shadow:0 16px 64px rgba(0,0,0,.3);}
+.sw-modal-hdr{background:var(--p-navy);padding:18px 20px;display:flex;justify-content:space-between;align-items:flex-start;position:sticky;top:0;border-radius:12px 12px 0 0;}
+.sw-modal-name{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;color:#fff;line-height:1;}
+.sw-modal-sub{font-size:12px;color:rgba(255,255,255,.5);margin-top:4px;}
+.sw-modal-close{background:rgba(255,255,255,.15);border:none;color:#fff;width:30px;height:30px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:12px;}
+.sw-modal-close:hover{background:rgba(255,255,255,.25);}
+.sw-modal-body{padding:18px 20px;}
+.sw-meet-block{margin-bottom:20px;}
+.sw-meet-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--p-muted);margin-bottom:8px;}
+.sw-event-entry{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--p-card);border:1px solid var(--p-border);border-radius:6px;margin-bottom:6px;}
+.sw-event-stroke{flex:1;}
+.sw-event-name-big{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--p-navy);}
+.sw-event-hl{font-size:12px;color:var(--p-muted);margin-top:2px;}
+.sw-event-time-big{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--water);}
+.sw-event-time-big.nt{color:var(--p-muted);font-size:15px;font-weight:400;font-style:italic;}
+
+/* ══════════════════════════════
+   COACH VIEW  (reuse dark tokens)
+══════════════════════════════ */
+#coach-view{min-height:100vh;}
+
+/* COACH HEADER */
+#coach-header{background:var(--c-mid);border-bottom:2px solid var(--water);padding:12px 20px;display:flex;align-items:center;gap:16px;}
+.c-logo{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--c-white);letter-spacing:.04em;line-height:1;}
+.c-logo span{color:var(--chlorine);}
+.c-logo-sub{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--c-muted);margin-top:2px;}
+.c-hdr-spacer{flex:1;}
+.c-hdr-stat{text-align:center;}
+.c-hdr-stat .n{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--chlorine);line-height:1;}
+.c-hdr-stat .l{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--c-muted);}
+.c-hdr-div{width:1px;height:30px;background:var(--c-border);}
+
+/* COACH NAV */
+#coach-nav{background:var(--c-mid);display:flex;gap:2px;padding:0 20px;border-bottom:1px solid var(--c-border);}
+.c-nav-btn{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:10px 18px;background:none;border:none;color:var(--c-muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px;transition:color .15s,border-color .15s;}
+.c-nav-btn:hover{color:var(--c-text);}
+.c-nav-btn.active{color:var(--chlorine);border-bottom-color:var(--chlorine);}
+
+/* COACH PANELS */
+.c-panel{display:none;padding:20px;max-width:1100px;}
+.c-panel.active{display:block;}
+.c-section-head{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.c-section-head h2{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--c-white);letter-spacing:.04em;}
+
+/* API KEY */
+.api-prompt{background:var(--c-card);border:1px solid var(--amber);border-radius:8px;padding:16px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.api-prompt p{flex:1;font-size:13px;color:var(--c-text);min-width:200px;}
+.api-prompt p strong{color:var(--amber);}
+.api-input-row{display:flex;gap:8px;}
+.api-input-row input{flex:1;font-family:monospace;font-size:12px;background:var(--c-mid);border:1px solid var(--c-light);color:var(--c-text);padding:7px 10px;border-radius:4px;outline:none;min-width:240px;}
+
+/* UPLOAD ZONE */
+.upload-zone{border:2px dashed var(--c-light);border-radius:8px;padding:32px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;margin-bottom:16px;}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--water);background:rgba(27,127,203,.07);}
+.upload-icon{font-size:30px;margin-bottom:8px;}
+.upload-zone p{color:var(--c-muted);font-size:13px;}
+.upload-zone strong{color:var(--c-text);}
+
+/* MEET LIST (coach) */
+.c-meet-list{display:flex;flex-direction:column;gap:10px;}
+.c-meet-item{background:var(--c-card);border:1px solid var(--c-border);border-radius:6px;padding:12px 16px;display:flex;align-items:center;gap:14px;}
+.c-meet-item .cmi-date{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--water-lt);line-height:1;min-width:48px;text-align:center;}
+.c-meet-item .cmi-mon{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--c-muted);}
+.c-meet-item .cmi-info{flex:1;}
+.c-meet-item .cmi-name{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--c-white);}
+.c-meet-item .cmi-meta{font-size:11px;color:var(--c-muted);margin-top:2px;}
+
+/* COACH FILTERS */
+.c-filters{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
+.c-filters select,.c-filters input{background:var(--c-mid);border:1px solid var(--c-light);color:var(--c-text);padding:7px 10px;font-family:'Barlow',sans-serif;font-size:13px;border-radius:4px;outline:none;}
+.c-filters select:focus,.c-filters input:focus{border-color:var(--water);}
+.c-filters select option{background:var(--c-mid);}
+
+/* PROGRESS CARDS */
+.c-swimmer-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;}
+.c-sw-card{background:var(--c-card);border:1px solid var(--c-border);border-radius:6px;overflow:hidden;cursor:pointer;transition:border-color .15s;}
+.c-sw-card:hover{border-color:var(--water);}
+.c-sw-card-head{background:var(--c-light);padding:10px 14px;display:flex;justify-content:space-between;align-items:baseline;}
+.c-sw-card-name{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;color:var(--c-white);}
+.c-sw-card-meta{font-size:11px;color:var(--water-lt);}
+.c-sw-card-body{padding:10px 14px;display:flex;flex-direction:column;gap:5px;}
+.c-sw-event-row{display:flex;align-items:center;gap:8px;font-size:12px;}
+.c-sw-event-name{flex:1;color:var(--c-muted);}
+.c-sw-time{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;color:var(--chlorine);}
+.c-sw-delta{font-size:11px;font-weight:600;}
+.c-sw-delta.better{color:var(--green);}
+.c-sw-delta.worse{color:var(--red);}
+.sparkline-dots{display:flex;gap:3px;align-items:flex-end;height:20px;}
+.sparkline-dot{width:5px;border-radius:2px;}
+
+/* RELAY */
+.relay-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:760px){.relay-grid{grid-template-columns:1fr;}}
+.relay-card{background:var(--c-card);border:1px solid var(--c-border);border-radius:6px;overflow:hidden;}
+.relay-card-head{background:var(--c-light);padding:10px 14px;}
+.relay-card-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--c-white);}
+.relay-card-sub{font-size:11px;color:var(--c-muted);margin-top:2px;}
+.relay-swimmer{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--c-border);}
+.relay-swimmer:last-of-type{border-bottom:none;}
+.relay-leg{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-muted);width:40px;flex-shrink:0;}
+.relay-swimmer-name{flex:1;font-weight:500;color:var(--c-white);font-size:13px;}
+.relay-swimmer-time{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--chlorine);}
+.relay-total{padding:10px 14px;background:rgba(125,245,208,.06);display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(125,245,208,.15);}
+.relay-total-lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--chlorine);}
+.relay-total-time{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--chlorine);}
+.bench-title{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--c-muted);margin-bottom:6px;padding:10px 14px 0;}
+.bench-row{display:flex;align-items:center;gap:10px;padding:6px 14px;border-top:1px solid var(--c-border);font-size:12px;}
+.bench-rank{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--c-muted);width:18px;}
+.bench-name{flex:1;color:var(--c-text);}
+.bench-time{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;color:var(--water-lt);}
+
+/* COACH MODAL */
+.c-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:300;align-items:center;justify-content:center;padding:20px;}
+.c-modal-overlay.open{display:flex;}
+.c-modal{background:var(--c-card);border:1px solid var(--water);border-radius:8px;width:100%;max-width:580px;max-height:85vh;overflow-y:auto;}
+.c-modal-hdr{background:var(--c-light);padding:14px 18px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;}
+.c-modal-name{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--c-white);}
+.c-modal-close{background:none;border:none;color:var(--c-muted);font-size:22px;cursor:pointer;}
+.c-modal-close:hover{color:var(--c-white);}
+.c-modal-body{padding:18px;}
+.c-progress-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--c-border);}
+.c-progress-row:last-child{border-bottom:none;}
+.c-progress-meet{flex:1;font-size:12px;color:var(--c-muted);}
+.c-progress-time{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:600;color:var(--chlorine);}
+.c-progress-delta{font-size:12px;font-weight:600;min-width:50px;text-align:right;}
+.c-event-section{margin-bottom:18px;}
+.c-event-section-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--water-lt);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;}
+
+/* PARSING */
+.parsing-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:none;align-items:center;justify-content:center;}
+.parsing-overlay.show{display:flex;}
+.parsing-box{background:var(--c-card);border:1px solid var(--water);border-radius:10px;padding:32px 40px;text-align:center;min-width:300px;}
+.parsing-box h3{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--c-white);margin-bottom:6px;}
+.parsing-box p{color:var(--c-muted);font-size:13px;margin-bottom:18px;}
+.spinner{width:34px;height:34px;border:3px solid var(--c-light);border-top-color:var(--chlorine);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.wave-bar{height:3px;background:linear-gradient(90deg,transparent,var(--water),var(--chlorine),var(--water),transparent);background-size:200%;animation:wave 1.5s linear infinite;border-radius:2px;margin-top:14px;}
+@keyframes wave{from{background-position:200%}to{background-position:-200%}}
+
+
+
+/* LANE STRIPE */
+.lane-stripe{height:3px;background:repeating-linear-gradient(90deg,var(--water) 0,var(--water) 18px,transparent 18px,transparent 26px);opacity:.25;}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;padding:11px 18px;border-radius:6px;font-size:13px;z-index:600;opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s;pointer-events:none;}
+.toast.show{opacity:1;transform:none;}
+.toast.success{background:#dcfce7;color:#166534;border:1px solid #86efac;}
+.toast.error{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;}
+.toast.info{background:#dbeafe;color:#1e3a8a;border:1px solid #93c5fd;}
+body.coach-mode .toast.info{background:var(--c-card);color:var(--c-text);border:1px solid var(--c-border);}
+
+/* EMPTY STATES */
+.c-empty{color:var(--c-muted);font-style:italic;padding:32px;text-align:center;}
+.c-empty strong{display:block;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--c-muted);letter-spacing:.04em;margin-bottom:6px;font-style:normal;}
+
+@media(max-width:600px){
+  .p-hero{padding:28px 16px 36px;}
+  .p-main{padding:20px 14px 40px;}
+  .meet-card-row{flex-wrap:wrap;gap:10px;}
+}
+</style>
+</head>
+<body class="parent-mode">
+
+<!-- ══════════════════════════════════════
+     PARENT VIEW
+══════════════════════════════════════ -->
+<!-- SHARED TOP NAV (always visible) -->
+<div id="shared-header" style="background:var(--p-navy);">
+  <div style="padding:14px 24px;display:flex;align-items:center;">
+    <div class="p-logo">
+      <div class="p-logo-name">Adelphi <span>Dolphins</span></div>
+      <div class="p-logo-sub">Swim Team · PMSL</div>
+    </div>
+  </div>
+  <div class="view-tabs">
+    <button class="view-tab active-families" id="tab-families" onclick="switchMode('parent')">🏊 Families</button>
+    <button class="view-tab" id="tab-coaches" onclick="switchMode('coach')">📋 Coaches</button>
+  </div>
+</div>
+
+<div id="parent-view">
+  <div id="parent-header"></div>
+
+  <!-- HERO + SEARCH -->
+  <div class="p-hero">
+    <div class="p-hero-eyebrow">2026 Season</div>
+    <h1>Find your <em>swimmer</em></h1>
+    <div class="search-wrap">
+      <input type="text" id="parent-search" placeholder="Type a swimmer's name…" autocomplete="off"
+             oninput="parentSearch()" onfocus="parentSearch()">
+      <span class="search-icon">🔍</span>
+      <div class="search-results" id="search-results"></div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="p-main">
+    <div id="parent-schedule-section">
+      <div class="p-section-title">Season Schedule</div>
+      <div class="meet-timeline" id="parent-meet-list">
+        <div class="p-empty">
+          <div class="p-empty-icon">📅</div>
+          <strong>No meets posted yet</strong>
+          Meet schedules will appear here once your coaching staff uploads them.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Swimmer detail modal (parent) -->
+<div class="sw-modal-overlay" id="sw-modal-overlay" onclick="closeSwModal(event)">
+  <div class="sw-modal">
+    <div class="sw-modal-hdr">
+      <div>
+        <div class="sw-modal-name" id="sw-modal-name"></div>
+        <div class="sw-modal-sub" id="sw-modal-sub"></div>
+      </div>
+      <button class="sw-modal-close" onclick="closeSwModalDirect()">✕</button>
+    </div>
+    <div class="sw-modal-body" id="sw-modal-body"></div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     COACH VIEW
+══════════════════════════════════════ -->
+<div id="coach-view">
+  <div id="coach-header">
+    <div class="c-hdr-spacer"></div>
+    <div class="c-hdr-stat"><div class="n" id="hdr-meets">0</div><div class="l">Meets</div></div>
+    <div class="c-hdr-div"></div>
+    <div class="c-hdr-stat"><div class="n" id="hdr-swimmers">0</div><div class="l">Swimmers</div></div>
+    <div class="c-hdr-div"></div>
+    <div class="c-hdr-stat"><div class="n" id="hdr-prs">0</div><div class="l">PRs</div></div>
+  </div>
+  <div class="lane-stripe"></div>
+  <div id="coach-nav">
+    <button class="c-nav-btn active" onclick="showCoachPanel('meets',this)">📁 Meets</button>
+    <button class="c-nav-btn" onclick="showCoachPanel('progress',this)">📈 Progress</button>
+    <button class="c-nav-btn" onclick="showCoachPanel('relays',this)">🏊 Relays</button>
+  </div>
+
+  <!-- MEETS PANEL -->
+  <div id="c-panel-meets" class="c-panel active">
+    <div id="api-key-section" class="api-prompt">
+      <div>⚠️</div>
+      <p><strong>Anthropic API key required</strong> to parse PDFs. Stored only in your browser.</p>
+      <div class="api-input-row">
+        <input type="password" id="api-key-input" placeholder="sk-ant-…">
+        <button class="btn btn-accent" onclick="saveApiKey()">Save</button>
+      </div>
+    </div>
+    <div class="c-section-head"><h2>Meets This Season</h2></div>
+    <div class="upload-zone" id="upload-zone" onclick="document.getElementById('pdf-input').click()"
+         ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropPdf(event)">
+      <div class="upload-icon">📄</div>
+      <p><strong>Upload a HY-TEK PDF</strong></p>
+      <p>Meet Program or Team Entries export · Drop here or click to browse</p>
+      <input type="file" id="pdf-input" accept=".pdf" style="display:none" onchange="handlePdfFile(this.files[0])">
+    </div>
+    <div class="c-meet-list" id="c-meet-list"></div>
+  </div>
+
+  <!-- PROGRESS PANEL -->
+  <div id="c-panel-progress" class="c-panel">
+    <div class="c-filters">
+      <input type="text" id="prog-search" placeholder="Search swimmer…" oninput="renderProgress()">
+      <select id="prog-gender" onchange="renderProgress()">
+        <option value="">All</option><option value="Boys">Boys</option><option value="Girls">Girls</option>
+      </select>
+      <select id="prog-ag" onchange="renderProgress()">
+        <option value="">All age groups</option>
+        <option value="8U">8 &amp; Under</option><option value="9-10">9–10</option>
+        <option value="11-12">11–12</option><option value="13-14">13–14</option><option value="15-18">15–18</option>
+      </select>
+      <select id="prog-sort" onchange="renderProgress()">
+        <option value="name">Sort: Name</option>
+        <option value="most-improved">Most Improved</option>
+        <option value="most-regressed">Most Regressed</option>
+      </select>
+    </div>
+    <div class="c-swimmer-cards" id="c-swimmer-cards"></div>
+  </div>
+
+  <!-- RELAYS PANEL -->
+  <div id="c-panel-relays" class="c-panel">
+    <div class="c-filters">
+      <select id="relay-ag" onchange="renderRelays()">
+        <option value="">Select age group…</option>
+        <option value="8 & Under">8 &amp; Under</option><option value="9-10">9–10</option>
+        <option value="10 & Under">10 &amp; Under</option><option value="11-12">11–12</option>
+        <option value="12 & Under">12 &amp; Under</option><option value="13-14">13–14</option>
+        <option value="15-18">15–18</option>
+      </select>
+      <select id="relay-meet" onchange="renderRelays()">
+        <option value="best">Best times across all meets</option>
+      </select>
+    </div>
+    <div id="relay-output"></div>
+  </div>
+
+  <!-- COACH MODAL -->
+  <div class="c-modal-overlay" id="c-modal-overlay" onclick="closeCModal(event)">
+    <div class="c-modal">
+      <div class="c-modal-hdr">
+        <div class="c-modal-name" id="c-modal-name"></div>
+        <button class="c-modal-close" onclick="closeCModalDirect()">✕</button>
+      </div>
+      <div class="c-modal-body" id="c-modal-body"></div>
+    </div>
+  </div>
+</div><!-- /coach-view -->
+
+<!-- PIN GATE -->
+
+<!-- PARSING OVERLAY -->
+<div class="parsing-overlay" id="parsing-overlay">
+  <div class="parsing-box">
+    <div class="spinner"></div>
+    <h3>Parsing Meet PDF</h3>
+    <p id="parsing-status">Extracting text…</p>
+    <div class="wave-bar"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+// DB
+// ══════════════════════════════════════════
+const DB_KEY = 'dolphins_v3';
+function loadDB(){ try{return JSON.parse(localStorage.getItem(DB_KEY))||{meets:[],apiKey:''};}catch{return{meets:[],apiKey:''};} }
+function saveDB(d){ localStorage.setItem(DB_KEY,JSON.stringify(d)); }
+let DB = loadDB();
+
+// ══════════════════════════════════════════
+// MODE SWITCH
+// ══════════════════════════════════════════
+let currentMode = 'parent';
+
+function switchMode(mode){
+  currentMode = mode;
+  document.body.className = mode+'-mode';
+  document.getElementById('parent-view').style.display = mode==='parent' ? 'block' : 'none';
+  document.getElementById('coach-view').style.display  = mode==='coach'  ? 'block' : 'none';
+  document.getElementById('tab-families').className = 'view-tab' + (mode==='parent' ? ' active-families' : '');
+  document.getElementById('tab-coaches').className  = 'view-tab' + (mode==='coach'  ? ' active-coaches'  : '');
+  if(mode==='coach'){ updateCoachHeader(); renderCoachMeets(); updateRelayMeetDropdown(); }
+  if(mode==='parent'){ renderParentSchedule(); }
+}
+
+// ══════════════════════════════════════════
+// API KEY
+// ══════════════════════════════════════════
+function saveApiKey(){
+  const k=document.getElementById('api-key-input').value.trim();
+  if(!k.startsWith('sk-ant-')){toast('Key should start with sk-ant-','error');return;}
+  DB.apiKey=k; saveDB(DB);
+  document.getElementById('api-key-section').style.display='none';
+  toast('API key saved','success');
+}
+function initApiKeyUI(){
+  document.getElementById('api-key-section').style.display = DB.apiKey ? 'none' : 'flex';
+}
+
+// ══════════════════════════════════════════
+// PDF UPLOAD
+// ══════════════════════════════════════════
+function dragOver(e){e.preventDefault();document.getElementById('upload-zone').classList.add('drag');}
+function dragLeave(){document.getElementById('upload-zone').classList.remove('drag');}
+function dropPdf(e){e.preventDefault();dragLeave();const f=e.dataTransfer.files[0];if(f&&f.name.endsWith('.pdf'))handlePdfFile(f);}
+
+async function handlePdfFile(file){
+  if(!DB.apiKey){toast('Add your Anthropic API key first','error');return;}
+  if(!file)return;
+  showParsing('Reading PDF pages…');
+  try{
+    const text = await extractPdfText(file);
+    setParsing('Claude is parsing swimmer data…');
+    const meetData = await parseMeetWithClaude(text, file.name);
+    setParsing('Saving to season record…');
+    meetData.id = Date.now();
+    meetData.filename = file.name;
+    // Prompt for location
+    const loc = prompt(`Meet location / pool for "${meetData.name}"?\n(e.g. Adelphi Recreation Center, 2800 Campus Dr, Adelphi MD)`,'');
+    if(loc) meetData.location = loc;
+    DB.meets.push(meetData);
+    DB.meets.sort((a,b)=>new Date(a.date)-new Date(b.date));
+    saveDB(DB);
+    hideParsing();
+    renderCoachMeets(); renderParentSchedule(); updateCoachHeader(); updateRelayMeetDropdown();
+    toast(`✓ "${meetData.name}" — ${meetData.swimmers.length} swimmers loaded`,'success');
+  } catch(err){
+    hideParsing();
+    toast('Parse failed: '+err.message,'error');
+    console.error(err);
+  }
+}
+
+async function extractPdfText(file){
+  const lib = window['pdfjs-dist/build/pdf'];
+  lib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const ab = await file.arrayBuffer();
+  const pdf = await lib.getDocument({data:ab}).promise;
+  let text='';
+  for(let i=1;i<=pdf.numPages;i++){
+    const page=await pdf.getPage(i);
+    const tc=await page.getTextContent();
+    text+=tc.items.map(it=>it.str).join(' ')+'\n';
+  }
+  return text;
+}
+
+async function parseMeetWithClaude(pdfText, filename){
+  const prompt=`You are parsing a HY-TEK swim meet PDF export for the Adelphi Dolphins team.
+Extract ALL swimmers and their entries. Return ONLY valid JSON, no markdown, no extra text.
+
+Return this exact structure:
+{
+  "name": "meet name",
+  "date": "YYYY-MM-DD",
+  "course": "SC Meters",
+  "swimmers": [
+    {
+      "name": "Last, First",
+      "age": 12,
+      "gender": "Boys",
+      "events": [
+        { "eventNum": 3, "dist": 25, "stroke": "Butterfly", "ageGroup": "10 & Under", "heat": 2, "lane": 4, "seedTime": "23.27" }
+      ]
+    }
+  ]
+}
+
+Rules:
+- gender: "Boys" or "Girls"
+- stroke: Butterfly | Freestyle | Breaststroke | Backstroke | IM
+- seedTime: exact string e.g. "23.27", "1:02.45", or "NT"
+- ageGroup: "8 & Under" | "9-10" | "10 & Under" | "11-12" | "12 & Under" | "13-14" | "15-18"
+- Include ALL swimmers from ALL age groups
+- Default date "2026-06-06" if not found
+
+PDF TEXT:
+${pdfText.substring(0,28000)}`;
+
+  const resp=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':DB.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:8000,messages:[{role:'user',content:prompt}]})
+  });
+  if(!resp.ok){const e=await resp.json();throw new Error(e.error?.message||'API error');}
+  const data=await resp.json();
+  const raw=data.content[0].text.replace(/```json|```/g,'').trim();
+  return JSON.parse(raw);
+}
+
+function showParsing(msg){document.getElementById('parsing-overlay').classList.add('show');setParsing(msg);}
+function setParsing(msg){document.getElementById('parsing-status').textContent=msg;}
+function hideParsing(){document.getElementById('parsing-overlay').classList.remove('show');}
+
+// ══════════════════════════════════════════
+// DATA HELPERS
+// ══════════════════════════════════════════
+function timeToSec(t){
+  if(!t||t==='NT')return Infinity;
+  if(t.includes(':')){ const[m,s]=t.split(':');return parseFloat(m)*60+parseFloat(s); }
+  return parseFloat(t);
+}
+function secToTime(s){
+  if(!isFinite(s))return 'NT';
+  if(s>=60){const m=Math.floor(s/60);const sec=(s%60).toFixed(2).padStart(5,'0');return`${m}:${sec}`;}
+  return s.toFixed(2);
+}
+function deltaStr(nT,oT){
+  const n=timeToSec(nT),o=timeToSec(oT);
+  if(!isFinite(n)||!isFinite(o))return null;
+  const d=n-o;
+  if(Math.abs(d)<0.01)return{str:'—',cls:'same'};
+  if(d<0)return{str:d.toFixed(2)+'s',cls:'better'};
+  return{str:'+'+d.toFixed(2)+'s',cls:'worse'};
+}
+function ageGroup(age){ if(age<=8)return'8U';if(age<=10)return'9-10';if(age<=12)return'11-12';if(age<=14)return'13-14';return'15-18'; }
+
+function buildSwimmerDB(){
+  const db={};
+  DB.meets.forEach(meet=>{
+    meet.swimmers.forEach(sw=>{
+      if(!db[sw.name])db[sw.name]={name:sw.name,age:sw.age,gender:sw.gender,ag:ageGroup(sw.age),meets:[]};
+      db[sw.name].meets.push({meetId:meet.id,meetName:meet.name,date:meet.date,events:sw.events});
+    });
+  });
+  return Object.values(db);
+}
+
+function getEventHistory(sw,key){
+  const h=[];
+  sw.meets.forEach(m=>{
+    m.events.forEach(e=>{
+      if(`${e.dist}m ${e.stroke}`===key&&e.seedTime!=='NT')
+        h.push({time:e.seedTime,meetName:m.meetName,date:m.date});
+    });
+  });
+  return h.sort((a,b)=>new Date(a.date)-new Date(b.date));
+}
+
+function improvementScore(sw){
+  let tot=0,cnt=0;
+  const keys=[...new Set(sw.meets.flatMap(m=>m.events.map(e=>`${e.dist}m ${e.stroke}`)))];
+  keys.forEach(k=>{
+    const h=getEventHistory(sw,k);
+    if(h.length>=2){tot+=timeToSec(h[h.length-1].time)-timeToSec(h[0].time);cnt++;}
+  });
+  return cnt>0?tot/cnt:0;
+}
+
+// ══════════════════════════════════════════
+// PARENT — SCHEDULE
+// ══════════════════════════════════════════
+const expandedMeets = new Set();
+
+function renderParentSchedule(){
+  const el=document.getElementById('parent-meet-list');
+  if(!DB.meets.length){
+    el.innerHTML=`<div class="p-empty"><div class="p-empty-icon">📅</div><strong>No meets posted yet</strong>Meet schedules will appear here once your coaching staff uploads them.</div>`;
+    return;
+  }
+  el.innerHTML=DB.meets.map(m=>{
+    const d=new Date(m.date+'T12:00:00');
+    const day=d.getDate(), mon=d.toLocaleString('default',{month:'short'}).toUpperCase();
+    const isExp=expandedMeets.has(m.id);
+    const evGroups = buildEventGroups(m);
+    const evCount = m.swimmers.reduce((a,s)=>a+s.events.length,0);
+    const locHtml = m.location
+      ? `<span>📍</span><a href="https://maps.google.com/?q=${encodeURIComponent(m.location)}" target="_blank" style="color:var(--p-accent);text-decoration:none;">${m.location}</a>`
+      : `<span style="color:var(--p-muted)">📍 Location TBD</span>`;
+
+    const heatsheetHtml = buildParentHeatsheet(m, evGroups);
+
+    return `<div class="meet-card ${isExp?'expanded':''}" id="mc-${m.id}">
+      <div class="meet-card-row" onclick="toggleMeetCard(${m.id})">
+        <div class="meet-date-block">
+          <div class="meet-date-day">${day}</div>
+          <div class="meet-date-mon">${mon} ${d.getFullYear()}</div>
+        </div>
+        <div class="meet-card-info">
+          <div class="meet-card-name">${m.name}</div>
+          <div class="meet-card-loc">${locHtml}</div>
+        </div>
+        <div class="meet-card-meta">
+          <span class="tag tag-blue">${m.course||'SCM'}</span>
+          <span style="font-size:12px;color:var(--p-muted)">${m.swimmers.length} swimmers</span>
+          <span class="meet-chevron ${isExp?'open':''}" id="chev-${m.id}">▶</span>
+        </div>
+      </div>
+      <div class="meet-heatsheet ${isExp?'open':''}" id="hs-${m.id}">
+        ${heatsheetHtml}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function buildEventGroups(meet){
+  // Group entries by event
+  const groups={};
+  meet.swimmers.forEach(sw=>{
+    sw.events.forEach(e=>{
+      const key=`${e.eventNum}||${e.gender}||${e.ageGroup}||${e.dist}m ${e.stroke}`;
+      if(!groups[key])groups[key]={eventNum:e.eventNum,gender:e.gender,ageGroup:e.ageGroup,dist:e.dist,stroke:e.stroke,heats:{}};
+      if(!groups[key].heats[e.heat])groups[key].heats[e.heat]=[];
+      groups[key].heats[e.heat].push({lane:e.lane,name:sw.name,age:sw.age,time:e.seedTime});
+    });
+  });
+  return Object.values(groups).sort((a,b)=>a.eventNum-b.eventNum);
+}
+
+function buildParentHeatsheet(meet, evGroups){
+  if(!evGroups.length) return '<div class="hs-empty">No event data available.</div>';
+  return evGroups.map(ev=>{
+    const heatNums=Object.keys(ev.heats).map(Number).sort((a,b)=>a-b);
+    const heatHtml=heatNums.map(hn=>{
+      const entries=ev.heats[hn].slice().sort((a,b)=>a.lane-b.lane);
+      const rows=entries.map(e=>`
+        <div class="hs-row">
+          <span class="hs-lane">${e.lane}</span>
+          <span class="hs-name">${e.name}</span>
+          <span class="hs-age">age ${e.age}</span>
+          <span class="hs-time ${e.time==='NT'?'nt':''}">${e.time}</span>
+        </div>`).join('');
+      return `<div class="hs-heat-label">Heat ${hn} of ${heatNums.length}</div>${rows}`;
+    }).join('');
+    return `<div class="hs-event">
+      <div class="hs-event-title">#${ev.eventNum} · ${ev.gender} ${ev.ageGroup} — ${ev.dist}m ${ev.stroke}</div>
+      ${heatHtml}
+    </div>`;
+  }).join('');
+}
+
+function toggleMeetCard(id){
+  const hs=document.getElementById('hs-'+id);
+  const chev=document.getElementById('chev-'+id);
+  const card=document.getElementById('mc-'+id);
+  const isOpen=hs.classList.contains('open');
+  if(isOpen){ hs.classList.remove('open'); chev.classList.remove('open'); card.classList.remove('expanded'); expandedMeets.delete(id); }
+  else { hs.classList.add('open'); chev.classList.add('open'); card.classList.add('expanded'); expandedMeets.add(id); }
+}
+
+// ══════════════════════════════════════════
+// PARENT — SWIMMER SEARCH
+// ══════════════════════════════════════════
+function parentSearch(){
+  const q=document.getElementById('parent-search').value.trim().toLowerCase();
+  const res=document.getElementById('search-results');
+  if(!q){ res.classList.remove('open'); return; }
+
+  const swimmers=buildSwimmerDB();
+  const matches=swimmers.filter(s=>s.name.toLowerCase().includes(q)).slice(0,10);
+  if(!matches.length){ res.innerHTML='<div class="search-result-item"><span class="sri-meta">No swimmers found</span></div>'; res.classList.add('open'); return; }
+
+  res.innerHTML=matches.map(s=>{
+    const evCount=s.meets.reduce((a,m)=>a+m.events.length,0);
+    const meets=s.meets.length;
+    return `<div class="search-result-item" onclick="openSwimmerParent('${s.name.replace(/'/g,"\\'")}')">
+      <div>
+        <div class="sri-name">${s.name}</div>
+        <div class="sri-meta">Age ${s.age} · ${s.gender} · ${evCount} event entries · ${meets} meet${meets!==1?'s':''}</div>
+      </div>
+      <span class="sri-badge tag tag-blue">${s.ag}</span>
+    </div>`;
+  }).join('');
+  res.classList.add('open');
+}
+
+// Close search on outside click
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.search-wrap')) document.getElementById('search-results').classList.remove('open');
+});
+
+function openSwimmerParent(name){
+  document.getElementById('search-results').classList.remove('open');
+  document.getElementById('parent-search').value='';
+
+  const swimmers=buildSwimmerDB();
+  const sw=swimmers.find(s=>s.name===name);
+  if(!sw)return;
+
+  document.getElementById('sw-modal-name').textContent=name;
+  document.getElementById('sw-modal-sub').textContent=`Age ${sw.age} · ${sw.gender} · ${sw.ag}`;
+
+  let html='';
+  sw.meets.forEach(m=>{
+    if(!m.events.length)return;
+    const evRows=m.events.map(e=>`
+      <div class="sw-event-entry">
+        <div class="sw-event-stroke">
+          <div class="sw-event-name-big">${e.dist}m ${e.stroke}</div>
+          <div class="sw-event-hl">Heat ${e.heat} · Lane ${e.lane} · ${e.ageGroup}</div>
+        </div>
+        <div class="sw-event-time-big ${e.seedTime==='NT'?'nt':''}">${e.seedTime}</div>
+      </div>`).join('');
+    html+=`<div class="sw-meet-block">
+      <div class="sw-meet-title">${m.meetName} &nbsp;·&nbsp; ${new Date(m.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
+      ${evRows}
+    </div>`;
+  });
+  if(!html) html='<div style="color:var(--p-muted);font-style:italic;padding:16px 0">No event entries found.</div>';
+
+  document.getElementById('sw-modal-body').innerHTML=html;
+  document.getElementById('sw-modal-overlay').classList.add('open');
+}
+function closeSwModal(e){ if(e.target===document.getElementById('sw-modal-overlay'))closeSwModalDirect(); }
+function closeSwModalDirect(){ document.getElementById('sw-modal-overlay').classList.remove('open'); }
+
+// ══════════════════════════════════════════
+// COACH — MEETS
+// ══════════════════════════════════════════
+function renderCoachMeets(){
+  const el=document.getElementById('c-meet-list');
+  if(!DB.meets.length){ el.innerHTML='<div class="c-empty"><strong>No meets yet</strong>Upload a HY-TEK PDF above.</div>'; return; }
+  el.innerHTML=DB.meets.map(m=>{
+    const d=new Date(m.date+'T12:00:00');
+    const day=d.getDate(),mon=d.toLocaleString('default',{month:'short'}).toUpperCase();
+    const ec=m.swimmers.reduce((a,s)=>a+s.events.length,0);
+    return `<div class="c-meet-item">
+      <div style="text-align:center"><div class="cmi-date">${day}</div><div class="cmi-mon">${mon} ${d.getFullYear()}</div></div>
+      <div class="cmi-info">
+        <div class="cmi-name">${m.name}</div>
+        <div class="cmi-meta">${m.course||'SCM'} &nbsp;·&nbsp; ${m.swimmers.length} swimmers &nbsp;·&nbsp; ${ec} entries${m.location?' &nbsp;·&nbsp; '+m.location:''}</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="tag tag-blue">${m.filename||'PDF'}</span>
+        <button class="btn btn-danger btn-sm" onclick="deleteMeet(${m.id})">Remove</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function deleteMeet(id){
+  if(!confirm('Remove this meet?'))return;
+  DB.meets=DB.meets.filter(m=>m.id!==id); saveDB(DB);
+  renderCoachMeets(); renderParentSchedule(); updateCoachHeader(); updateRelayMeetDropdown();
+  toast('Meet removed');
+}
+
+// ══════════════════════════════════════════
+// COACH — PROGRESS
+// ══════════════════════════════════════════
+function renderProgress(){
+  const q=document.getElementById('prog-search').value.toLowerCase();
+  const gf=document.getElementById('prog-gender').value;
+  const af=document.getElementById('prog-ag').value;
+  const sf=document.getElementById('prog-sort').value;
+  let swimmers=buildSwimmerDB();
+  if(!swimmers.length){ document.getElementById('c-swimmer-cards').innerHTML='<div class="c-empty"><strong>No data yet</strong>Upload a meet PDF first.</div>'; return; }
+  if(q)swimmers=swimmers.filter(s=>s.name.toLowerCase().includes(q));
+  if(gf)swimmers=swimmers.filter(s=>s.gender===gf);
+  if(af)swimmers=swimmers.filter(s=>s.ag===af);
+  if(sf==='name')swimmers.sort((a,b)=>a.name.localeCompare(b.name));
+  else if(sf==='most-improved')swimmers.sort((a,b)=>improvementScore(a)-improvementScore(b));
+  else if(sf==='most-regressed')swimmers.sort((a,b)=>improvementScore(b)-improvementScore(a));
+  if(!swimmers.length){ document.getElementById('c-swimmer-cards').innerHTML='<div class="c-empty">No matches.</div>'; return; }
+
+  document.getElementById('c-swimmer-cards').innerHTML=swimmers.map(sw=>{
+    const keys=[...new Set(sw.meets.flatMap(m=>m.events.map(e=>`${e.dist}m ${e.stroke}`)))];
+    const multi=sw.meets.length>1;
+    const sc=improvementScore(sw);
+    let badge='';
+    if(multi&&sc<-0.5)badge='<span class="tag tag-green">↑ Improving</span>';
+    else if(multi&&sc>0.5)badge='<span class="tag tag-red">↓ Check in</span>';
+    else if(multi)badge='<span class="tag tag-amber">→ Steady</span>';
+
+    const evRows=keys.slice(0,5).map(k=>{
+      const h=getEventHistory(sw,k);
+      let dHtml='',spark='';
+      if(h.length>=2){
+        const d=deltaStr(h[h.length-1].time,h[0].time);
+        if(d)dHtml=`<span class="c-sw-delta ${d.cls}">${d.str}</span>`;
+        const times=h.map(x=>timeToSec(x.time));
+        const mn=Math.min(...times),mx=Math.max(...times),range=mx-mn||1;
+        spark=`<div class="sparkline-dots">${times.map(t=>{const p=1-(t-mn)/range;const ht=Math.max(4,Math.round(p*18));const c=p>.6?'var(--green)':p<.4?'var(--red)':'var(--water-lt)';return`<div class="sparkline-dot" style="height:${ht}px;background:${c}"></div>`;}).join('')}</div>`;
+      }
+      const best=h.length?h.reduce((b,x)=>timeToSec(x.time)<timeToSec(b.time)?x:b,h[0]):null;
+      return `<div class="c-sw-event-row">
+        <span class="c-sw-event-name">${k}</span>
+        ${spark}
+        <span class="c-sw-time">${best?best.time:'NT'}</span>
+        ${dHtml}
+      </div>`;
+    }).join('');
+
+    return `<div class="c-sw-card" onclick="openCoachSwimmerModal('${sw.name.replace(/'/g,"\\'")}')">
+      <div class="c-sw-card-head">
+        <span class="c-sw-card-name">${sw.name}</span>
+        <span class="c-sw-card-meta">Age ${sw.age} · ${sw.meets.length} meet${sw.meets.length!==1?'s':''} ${badge}</span>
+      </div>
+      <div class="c-sw-card-body">${evRows}</div>
+    </div>`;
+  }).join('');
+}
+
+function openCoachSwimmerModal(name){
+  const swimmers=buildSwimmerDB();
+  const sw=swimmers.find(s=>s.name===name);
+  if(!sw)return;
+  document.getElementById('c-modal-name').textContent=name;
+  const keys=[...new Set(sw.meets.flatMap(m=>m.events.map(e=>`${e.dist}m ${e.stroke}`)))].sort();
+  let html=`<div style="color:var(--c-muted);font-size:12px;margin-bottom:16px">Age ${sw.age} · ${sw.gender} · ${sw.ag} · ${sw.meets.length} meet${sw.meets.length!==1?'s':''}</div>`;
+  keys.forEach(k=>{
+    const h=getEventHistory(sw,k);
+    if(!h.length)return;
+    let trend='';
+    if(h.length>=2){
+      const d=timeToSec(h[h.length-1].time)-timeToSec(h[0].time);
+      trend=d<-0.5?'<span class="tag tag-green">↑ PR trend</span>':d>0.5?'<span class="tag tag-red">↓ Slowing</span>':'<span class="tag tag-amber">→ Consistent</span>';
+    }
+    const rows=h.map((x,i)=>{
+      let dHtml='';
+      if(i>0){const d=deltaStr(x.time,h[i-1].time);if(d)dHtml=`<span class="c-progress-delta ${d.cls}">${d.str}</span>`;}
+      return `<div class="c-progress-row">
+        <span class="c-progress-meet">${x.meetName}</span>
+        <span class="c-progress-time">${x.time}</span>
+        ${dHtml}
+      </div>`;
+    }).join('');
+    html+=`<div class="c-event-section">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div class="c-event-section-title">${k}</div>${trend}
+      </div>${rows}
+    </div>`;
+  });
+  document.getElementById('c-modal-body').innerHTML=html;
+  document.getElementById('c-modal-overlay').classList.add('open');
+}
+function closeCModal(e){if(e.target===document.getElementById('c-modal-overlay'))closeCModalDirect();}
+function closeCModalDirect(){document.getElementById('c-modal-overlay').classList.remove('open');}
+
+// ══════════════════════════════════════════
+// COACH — RELAYS
+// ══════════════════════════════════════════
+const MEDLEY_LEGS=['Backstroke','Breaststroke','Butterfly','Freestyle'];
+
+function updateRelayMeetDropdown(){
+  const sel=document.getElementById('relay-meet');
+  const cur=sel.value;
+  sel.innerHTML='<option value="best">Best times across all meets</option>';
+  DB.meets.forEach(m=>{const o=document.createElement('option');o.value=m.id;o.textContent=m.name;sel.appendChild(o);});
+  sel.value=cur||'best';
+}
+
+function getSwimmersForRelay(ag,meetId){
+  const agMap={'8 & Under':s=>s.age<=8,'9-10':s=>s.age>=9&&s.age<=10,'10 & Under':s=>s.age<=10,'11-12':s=>s.age>=11&&s.age<=12,'12 & Under':s=>s.age<=12,'13-14':s=>s.age>=13&&s.age<=14,'15-18':s=>s.age>=15};
+  const filter=agMap[ag]||(()=>true);
+  return buildSwimmerDB().filter(filter).map(sw=>{
+    const best={};
+    const src=meetId==='best'?sw.meets:sw.meets.filter(m=>m.meetId==meetId);
+    src.forEach(m=>m.events.forEach(e=>{const s=timeToSec(e.seedTime);if(!isFinite(s))return;if(!best[e.stroke]||s<timeToSec(best[e.stroke]))best[e.stroke]=e.seedTime;}));
+    return{name:sw.name,age:sw.age,gender:sw.gender,strokeBest:best};
+  }).filter(sw=>Object.keys(sw.strokeBest).length>0);
+}
+
+function pickTeam(swimmers,strokes){
+  const used=new Set();
+  return strokes.map(stroke=>{
+    const cands=swimmers.filter(s=>!used.has(s.name)&&s.strokeBest[stroke]).sort((a,b)=>timeToSec(a.strokeBest[stroke])-timeToSec(b.strokeBest[stroke]));
+    if(cands.length){used.add(cands[0].name);return{...cands[0],legStroke:stroke,legTime:cands[0].strokeBest[stroke]};}
+    return{name:'—',legStroke:stroke,legTime:'NT'};
+  });
+}
+
+function renderRelays(){
+  const ag=document.getElementById('relay-ag').value;
+  const meetId=document.getElementById('relay-meet').value;
+  const out=document.getElementById('relay-output');
+  if(!ag){out.innerHTML='<div class="c-empty">Select an age group above.</div>';return;}
+  if(!DB.meets.length){out.innerHTML='<div class="c-empty"><strong>No meet data</strong>Upload a PDF first.</div>';return;}
+  const swimmers=getSwimmersForRelay(ag,meetId);
+  if(!swimmers.length){out.innerHTML='<div class="c-empty">No swimmers found for this selection.</div>';return;}
+  const boys=swimmers.filter(s=>s.gender==='Boys'),girls=swimmers.filter(s=>s.gender==='Girls');
+  const shortDist=ag.includes('8')||ag==='9-10'||ag.includes('10')?25:50;
+
+  function card(gsw,strokes,label,sub){
+    if(!gsw.length)return'';
+    const team=pickTeam(gsw,strokes);
+    const tot=team.reduce((a,s)=>a+(isFinite(timeToSec(s.legTime))?timeToSec(s.legTime):0),0);
+    const used=new Set(team.filter(s=>s.name!=='—').map(s=>s.name));
+    const rows=team.map(s=>`<div class="relay-swimmer"><span class="relay-leg">${s.legStroke.slice(0,4).toUpperCase()}</span><span class="relay-swimmer-name">${s.name}${s.age?` <span style="font-size:11px;color:var(--c-muted)">(${s.age})</span>`:''}</span><span class="relay-swimmer-time">${s.legTime}</span></div>`).join('');
+    const bench=gsw.filter(s=>!used.has(s.name)).slice(0,5);
+    const bRows=bench.map((s,i)=>{const t=strokes.length===1?(s.strokeBest[strokes[0]]||'—'):secToTime(Math.min(...Object.values(s.strokeBest).map(timeToSec)));return`<div class="bench-row"><span class="bench-rank">${i+1}</span><span class="bench-name">${s.name} <span style="color:var(--c-muted)">(${s.age})</span></span><span class="bench-time">${t}</span></div>`;}).join('');
+    return`<div class="relay-card"><div class="relay-card-head"><div class="relay-card-title">${label}</div><div class="relay-card-sub">${sub}</div></div>${rows}<div class="relay-total"><span class="relay-total-lbl">Projected</span><span class="relay-total-time">${secToTime(tot)}</span></div>${bench.length?`<div class="bench-title">Alternates</div>${bRows}`:''}</div>`;
+  }
+
+  out.innerHTML=`<div class="relay-grid">
+    ${card(boys,Array(4).fill('Freestyle'),`Boys ${shortDist}m Freestyle Relay`,`4 × ${shortDist}m · ${ag}`)}
+    ${card(girls,Array(4).fill('Freestyle'),`Girls ${shortDist}m Freestyle Relay`,`4 × ${shortDist}m · ${ag}`)}
+    ${card(boys,MEDLEY_LEGS,'Boys Medley Relay',`Back / Breast / Fly / Free · ${ag}`)}
+    ${card(girls,MEDLEY_LEGS,'Girls Medley Relay',`Back / Breast / Fly / Free · ${ag}`)}
+  </div>`;
+}
+
+// ══════════════════════════════════════════
+// COACH HEADER STATS
+// ══════════════════════════════════════════
+function updateCoachHeader(){
+  const swimmers=buildSwimmerDB();
+  let prs=0;
+  swimmers.forEach(sw=>{
+    const keys=[...new Set(sw.meets.flatMap(m=>m.events.map(e=>`${e.dist}m ${e.stroke}`)))];
+    keys.forEach(k=>{const h=getEventHistory(sw,k);if(h.length>=2&&timeToSec(h[h.length-1].time)<timeToSec(h[0].time))prs++;});
+  });
+  document.getElementById('hdr-meets').textContent=DB.meets.length;
+  document.getElementById('hdr-swimmers').textContent=swimmers.length;
+  document.getElementById('hdr-prs').textContent=prs;
+}
+
+// ══════════════════════════════════════════
+// COACH PANEL NAV
+// ══════════════════════════════════════════
+function showCoachPanel(id,btn){
+  document.querySelectorAll('.c-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.c-nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('c-panel-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='progress')renderProgress();
+  if(id==='relays'){updateRelayMeetDropdown();renderRelays();}
+}
+
+// ══════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════
+let toastTimer;
+function toast(msg,type='info'){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.className='toast show '+type;
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),3200);
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+// Start in parent/families mode
+document.getElementById('coach-view').style.display = 'none';
+document.getElementById('parent-view').style.display = 'block';
+initApiKeyUI();
+renderParentSchedule();
+</script>
+</body>
+</html>
